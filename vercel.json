@@ -1,0 +1,16 @@
+{
+  "installCommand": "pip install -r requirements-prod.txt",
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 60,
+      "excludeFiles": "{DATA/**,processed_data/**,DOCS/**,notebooks/**,ui/**,evals/**,.venv/**,.logfire/**}"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index.py"
+    }
+  ]
+}
+

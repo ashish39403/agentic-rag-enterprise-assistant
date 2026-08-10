@@ -1,0 +1,15 @@
+.env
+.env.*
+.venv/
+.logfire/
+DATA/
+processed_data/
+DOCS/
+notebooks/
+ui/
+evals/
+test.ipynb
+*.log
+__pycache__/
+.pytest_cache/
+

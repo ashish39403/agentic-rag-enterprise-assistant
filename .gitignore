@@ -1,0 +1,84 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+tenvv/
+genv/
+enterprise_env/
+
+# Build and package artifacts
+build/
+dist/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+.streamlit/secrets.toml
+
+# Logs and local observability state
+*.log
+logs/
+.logfire/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Local vector stores and generated indexes
+index.faiss
+metadata.pkl
+*.sqlite
+*.sqlite3
+*.db
+qdrant_storage/
+
+# Generated ingestion outputs
+processed_data/
+
+# Large local corpora. Keep DATA/true_data trackable as the small demo dataset.
+DATA/noisy_data/
+DATA/noisy_data_10/
+DATA/noisy_data_20/
+
+# IDEs and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Tool/session scratch
+.claude/
+commands.md
+requirements-lock-before-langfuse-4-upgrade.txt
+requirements-lock-before-langfuse-openai-upgrade.txt
+.gcloudignore
+notebooks

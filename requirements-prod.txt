@@ -1,0 +1,21 @@
+# Backend runtime dependencies for container/Vercel deployment.
+# Local-only UI/evals/ingestion-heavy packages stay in requirements.txt.
+
+fastapi==0.141.1
+uvicorn[standard]==0.52.1
+python-dotenv==1.2.2
+requests==2.34.2
+pydantic==2.13.4
+
+openai==2.53.0
+langfuse==4.14.3
+langchain==1.3.14
+langchain-core==1.5.3
+langchain-openai==1.4.2
+langgraph==1.2.10
+
+qdrant-client==1.19.0
+nemoguardrails==0.23.0
+
+logfire[fastapi,requests]==4.40.0
+loguru==0.7.3

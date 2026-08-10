@@ -1,60 +1,64 @@
-# Enterprise Agentic RAG (Scalable Pipeline)
+# Enterprise Agentic RAG Assistant
 
-A production-grade, enterprise-level RAG system built with **LangGraph**, **Portkey LLM Gateway**, and **Gemini Embeddings**. The system distinguishes between technical "True Data" and random "Noisy Data" using semantic re-ranking, history-aware planning, and NeMo Guardrails for input/output safety.
+A production-style Agentic RAG system for enterprise document intelligence. It combines a FastAPI backend, LangGraph agent workflow, Qdrant vector search, NeMo Guardrails, LLM-based reranking, Langfuse tracing, Logfire monitoring, Streamlit UI, and an evaluation pipeline.
 
-## Key Features
+This project is designed as an interview-ready backend + AI systems showcase: it demonstrates how a real RAG application can separate UI, API, retrieval, guardrails, observability, ingestion, and evaluation into clean modules.
 
-- **Agentic Intelligence**: LangGraph for cyclic reasoning, multi-step planning, and conversation memory.
-- **Guardrails**: NeMo Guardrails gate blocks off-topic, jailbreak, and injection inputs before any retrieval.
-- **LLM Gateway**: Portkey routes all LLM calls with automatic fallback between primary and backup Groq keys.
-- **Enterprise Search**: Qdrant Cloud for high-performance vector search + FlashRank for local semantic reranking.
-- **Gemini Embeddings**: Google `gemini-embedding-2-preview` (3072-dim) via `langchain-google-genai`.
-- **Local Document Parsing**: PDF, HTML, TXT, DOCX, PPTX parsed entirely on-device — no external OCR service.
-- **Observability**: Full trace nesting with **Pydantic Logfire** and **LangSmith** across every agent node.
-- **Evaluation Suite**: RAGAS-powered eval pipeline (6 metrics) with a dedicated Streamlit demo app.
+![Enterprise Agentic RAG Architecture](DOCS/assets/enterprise-agentic-rag-architecture.png)
 
 ---
 
-## Agent Intelligence Flow
+## What This Project Does
 
-```mermaid
-graph TD
-    User((User)) --> UI[Streamlit UI]
-    UI --> API[FastAPI /query]
-    API --> Guard{NeMo Guardrails}
-    Guard -->|Blocked| UI
-    Guard -->|Pass| Planner{Planner Node}
-    Planner -->|Conversational| Responder[Responder Node]
-    Planner -->|Technical| Retriever[Retriever Node]
-    Retriever --> Reranker[FlashRank Local Reranker]
-    Reranker --> Responder
-    Responder --> UI
-    Responder -.-> Memory[(LangGraph MemorySaver)]
+The assistant answers questions from a curated technical documentation corpus while filtering unsafe/off-topic input, retrieving relevant chunks, reranking context, generating grounded answers, and tracing the full request path.
+
+Core flow:
+
+```text
+User -> Streamlit UI -> FastAPI /query -> Guardrails -> LangGraph Agent
+     -> Planner -> Retriever -> Qdrant -> Reranker -> Responder -> LLM
+     -> Final Answer + Sources + Trace
 ```
 
 ---
 
-## Project Structure
+## Key Features
 
-```text
-├── app/
-│   ├── agents/
-│   │   └── nodes/       # Planner, Retriever, Responder LangGraph nodes
-│   ├── gateway/         # Portkey LLM gateway — primary + fallback Groq routing
-│   ├── guardrails/      # NeMo Guardrails input/output filtering
-│   ├── ingestion/
-│   │   ├── chunking/    # Paragraph-based text splitter (1500 char max)
-│   │   └── loaders/     # Local parsers — PDF (pypdf), HTML, TXT, DOCX, PPTX
-│   ├── services/
-│   │   └── retrieval/   # Gemini embeddings + Qdrant search + FlashRank reranking
-│   ├── config.py        # Centralized environment variable management
-│   └── main.py          # FastAPI entrypoint — guardrails gate + /query endpoint
-├── evals/               # RAGAS evaluation suite + Streamlit 3-tab demo
-├── ui/                  # Streamlit chat interface with reasoning step transparency
-├── processed_data/      # Auto-generated — parsed & chunked JSON output per document
-├── docs/                # Architectural and operational guides (11 docs)
-├── DATA/                # Sample datasets (True vs Noisy documentation)
-└── requirements.txt     # Pinned dependencies
+- **Agentic RAG workflow**: LangGraph planner, retriever, and responder nodes.
+- **Guardrails before retrieval**: NeMo Guardrails checks the user request before expensive search/LLM calls.
+- **Vector search**: Qdrant Cloud stores indexed document chunks and serves semantic retrieval.
+- **LLM-based reranking**: retrieved chunks are reranked before answer generation.
+- **Session memory**: LangGraph `MemorySaver` keeps conversation context by `thread_id`.
+- **Central LLM gateway layer**: all main generation calls go through `app/gateway`.
+- **Observability**: Langfuse traces request-level spans and LLM calls; Logfire captures backend events.
+- **Document ingestion**: local parsers handle PDF, HTML, TXT, DOCX, and PPTX files.
+- **Evaluation suite**: RAGAS/custom evaluation pipeline for checking answer quality.
+- **Deployment-ready backend**: Dockerfile for container platforms and `api/index.py` + `vercel.json` for Vercel.
+
+---
+
+## Architecture
+
+```mermaid
+graph TD
+    User((User)) --> UI[Streamlit UI]
+    UI --> API[FastAPI Backend]
+    API --> Guard{NeMo Guardrails}
+    Guard -->|Blocked| Blocked[Safe Response]
+    Guard -->|Allowed| Agent[LangGraph Agent]
+    Agent --> Planner[Planner Node]
+    Planner -->|Conversational| Responder[Responder Node]
+    Planner -->|Technical Query| Retriever[Retriever Node]
+    Retriever --> Qdrant[(Qdrant Vector DB)]
+    Qdrant --> Reranker[LLM Reranker]
+    Reranker --> Responder
+    Responder --> Gateway[LLM Gateway Layer]
+    Gateway --> LLM[OpenAI-Compatible LLM]
+    LLM --> API
+    API --> UI
+    Agent -.-> Memory[(Session Memory)]
+    API -.-> Langfuse[Langfuse Tracing]
+    API -.-> Logfire[Logfire Monitoring]
 ```
 
 ---
@@ -62,109 +66,213 @@ graph TD
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
-| Orchestration | LangChain + LangGraph |
-| LLMs | Groq (Llama 3.3 70B) via **Portkey** gateway |
+| --- | --- |
+| Backend API | FastAPI, Uvicorn |
+| Agent orchestration | LangGraph, LangChain |
+| LLM interface | OpenAI-compatible API, LangChain OpenAI |
+| Vector database | Qdrant Cloud |
 | Guardrails | NeMo Guardrails |
-| Vector DB | Qdrant Cloud |
-| Reranking | FlashRank (local, zero-latency) |
-| Embeddings | Gemini `gemini-embedding-2-preview` (3072-dim) |
-| Document Parsing | pypdf + pdfplumber (local, no OCR service) |
-| Observability | Pydantic Logfire + LangSmith |
-| Evaluation | RAGAS + custom Tool Correctness (Jaccard) |
+| Reranking | LLM-based reranker |
+| Observability | Langfuse, Pydantic Logfire |
+| UI | Streamlit |
+| Evaluation | RAGAS-style evaluation pipeline, custom metrics |
+| Deployment | Docker, Vercel serverless adapter |
 
 ---
 
-## Getting Started
+## Project Structure
 
-### 1. Install dependencies
+```text
+.
++-- app/
+|   +-- agents/
+|   |   +-- graph.py
+|   |   +-- state.py
+|   |   +-- nodes/
+|   |       +-- planner.py
+|   |       +-- retriever.py
+|   |       +-- responder.py
+|   +-- gateway/
+|   |   +-- client.py
+|   +-- guardrails/
+|   |   +-- rails.py
+|   |   +-- colang_rules.py
+|   +-- ingestion/
+|   |   +-- processor.py
+|   |   +-- chunking/
+|   |   +-- loaders/
+|   +-- services/
+|   |   +-- retrieval/
+|   +-- config.py
+|   +-- main.py
++-- api/
+|   +-- index.py
++-- ui/
+|   +-- app.py
++-- evals/
++-- DOCS/
++-- DATA/
++-- Dockerfile
++-- vercel.json
++-- requirements.txt
++-- requirements-prod.txt
+```
+
+---
+
+## Environment Variables
+
+Create a `.env` file locally, or set these values in your deployment platform.
+
+```env
+# LLM provider
+OPENAI_API_KEY=
+OPENAI_BASE_URL=
+LLM_MODEL=nvidia/nemotron-3-ultra-550b-a55b
+OPENAI_EMBEDDING_MODEL=text-embedding-3-large
+
+# Qdrant
+QDRANT_CLUSTER_ENDPOINT=
+QDRANT_API_KEY=
+
+# Observability
+LANGFUSE_PUBLIC_KEY=
+LANGFUSE_SECRET_KEY=
+LANGFUSE_BASE_URL=https://cloud.langfuse.com
+LOGFIRE_TOKEN=
+
+# Streamlit UI
+BACKEND_URL=http://localhost:8000
+
+# Evaluation
+JUDGE_GROQ=
+```
+
+---
+
+## Local Setup
+
+### 1. Create and activate a virtual environment
 
 ```powershell
-python -m venv tenvv
-.\tenvv\Scripts\activate
+python -m venv .venv
+.\.venv\Scripts\activate
+```
+
+### 2. Install dependencies
+
+```powershell
 pip install -r requirements.txt
 ```
 
-### 2. Configure environment
-
-Create a `.env` file with the following keys:
-
-```env
-# Groq Reasoning Engine (Llama 3.3)
-GROQ_API_KEY = ""
-GROQ_FALLBACK_API_KEY = ""          # second Groq key, or same as primary
-
-# Portkey LLM Gateway
-PORTKEY_API_KEY = ""
-
-# Qdrant Vector DB
-QDRANT_API_KEY = ""
-QDRANT_CLUSTER_ENDPOINT = ""        # e.g. https://your-cluster.cloud.qdrant.io:6333
-
-# Pydantic Logfire Observability
-LOGFIRE_TOKEN = ""
-
-# LangSmith
-LANGSMITH_TRACING = true
-LANGSMITH_ENDPOINT = https://api.smith.langchain.com
-LANGSMITH_API_KEY = ""
-LANGSMITH_PROJECT = ""
-
-# Streamlit UI → FastAPI
-BACKEND_URL = ""                    # e.g. http://localhost:8000
-
-# Eval judge LLM (keep separate from main key to avoid rate-limiting the live app)
-JUDGE_GROQ = ""
-
-# Gemini Embeddings
-GEMINI_API_KEY = ""
-```
-
-### 3. Run data ingestion
-
-Parses all documents in `DATA/`, chunks them, saves metadata to `processed_data/`, and indexes vectors into Qdrant.
+### 3. Ingest documents into Qdrant
 
 ```powershell
 python -m app.ingestion.processor DATA --wipe
 ```
 
-> Pass `--wipe` to drop and recreate the Qdrant collection. Omit it to append to an existing collection.
+Use `--wipe` when you want to recreate the Qdrant collection from scratch.
 
-### 4. Launch the app
+### 4. Run the backend
 
 ```powershell
-# Terminal 1 — FastAPI backend
 uvicorn app.main:app --reload --port 8000
+```
 
-# Terminal 2 — Streamlit UI
+Backend health check:
+
+```text
+http://localhost:8000/
+```
+
+### 5. Run the Streamlit UI
+
+```powershell
 streamlit run ui/app.py
 ```
 
-### 5. Run the eval suite (optional)
+---
 
-```powershell
-# Requires the FastAPI backend running on :8000
-streamlit run evals/app.py
+## API Usage
+
+Send a query to the backend:
+
+```bash
+curl -X POST http://localhost:8000/query \
+  -H "Content-Type: application/json" \
+  -d "{\"q\":\"How do Kubernetes CronJobs work?\",\"thread_id\":\"demo-user\"}"
+```
+
+Response shape:
+
+```json
+{
+  "question": "How do Kubernetes CronJobs work?",
+  "answer": "Generated answer...",
+  "thought_process": ["Intent: Technical", "Context Retrieved"],
+  "status": "Response generated.",
+  "sources": ["CONTENT: ..."]
+}
 ```
 
 ---
 
-## Documentation Index
+## Evaluation
 
-| # | Guide | What it covers |
-|---|-------|---------------|
-| 01 | [System Overview](docs/01_SYSTEM_OVERVIEW.md) | High-level vision and end-to-end flow |
-| 02 | [Ingestion Engine](docs/02_INGESTION_ENGINE.md) | Document parsing and indexing pipeline |
-| 03 | [Node Intelligence](docs/03_NODE_INTELLIGENCE.md) | Planner, Retriever, Responder internals |
-| 04 | [Observability](docs/04_TRACING_AND_OBSERVABILITY.md) | Logfire + LangSmith tracing |
-| 05 | [Environment Variables](docs/05_ENVIRONMENT_VARIABLES.md) | All env vars and configuration reference |
-| 06 | [Known Gotchas](docs/06_KNOWN_GOTCHAS.md) | Non-obvious bugs and architectural decisions |
-| 07 | [FlashRank Reranking](docs/07_FLASHRANK_RERANKING.md) | Local semantic reranker deep-dive |
-| 08 | [Guardrails](docs/08_GUARDRAILS.md) | NeMo Guardrails implementation |
-| 09 | [LLM Gateway](docs/09_LLM_GATEWAY.md) | Portkey routing, fallback, and observability |
-| 10 | [Evals](docs/10_EVALS.md) | RAGAS metrics theory and token budget |
-| 11 | [Evals Pipeline](docs/11_EVALS_PIPELINE.md) | Live eval pipeline and Streamlit demo |
+Run the evaluation dashboard:
+
+```powershell
+streamlit run evals/app.py
+```
+
+The evaluation suite is separated from the live backend so experiments and judge-model calls do not interfere with the production request path.
 
 ---
 
-*Built for High-Scale Enterprise Document Intelligence.*
+## Deployment
+
+### Container Platforms
+
+Use the included Dockerfile for Render, Railway, Fly.io, or Cloud Run style deployments:
+
+```bash
+docker build -t enterprise-agentic-rag .
+docker run -p 8080:8080 --env-file .env enterprise-agentic-rag
+```
+
+### Vercel Backend
+
+This repo also includes:
+
+- `api/index.py`
+- `vercel.json`
+- `.vercelignore`
+- `requirements-prod.txt`
+
+Set the required environment variables in Vercel, then deploy the repository. The FastAPI app is exposed through the Vercel Python function entrypoint.
+
+---
+
+## Documentation
+
+| Guide | Description |
+| --- | --- |
+| [System Overview](DOCS/01_SYSTEM_OVERVIEW.md) | End-to-end system flow |
+| [Ingestion Engine](DOCS/02_INGESTION_ENGINE.md) | Document parsing and chunk indexing |
+| [Node Intelligence](DOCS/03_NODE_INTELLIGENCE.md) | Planner, retriever, responder internals |
+| [Tracing and Observability](DOCS/04_TRACING_AND_OBSERVABILITY.md) | Logfire and tracing design |
+| [Environment Variables](DOCS/05_ENVIRONMENT_VARIABLES.md) | Configuration reference |
+| [Known Gotchas](DOCS/06_KNOWN_GOTCHAS.md) | Bugs, fixes, and design notes |
+| [Reranking](DOCS/07_FLASHRANK_RERANKING.md) | Reranking strategy |
+| [Guardrails](DOCS/08_GUARDRAILS.md) | NeMo Guardrails implementation |
+| [LLM Gateway](DOCS/09_LLM_GATEWAY.md) | Gateway abstraction and routing |
+| [Evals](DOCS/10_EVALS.md) | Evaluation theory and metrics |
+| [Evals Pipeline](DOCS/11_EVALS_PIPELINE.md) | Live evaluation workflow |
+
+---
+
+## Interview Summary
+
+This project demonstrates how to build an enterprise-style RAG system with clean separation between UI, API, agent orchestration, retrieval, guardrails, observability, and evaluation.
+
+It is demo-ready and deployment-ready for portfolio/interview use. For a public production rollout, the next hardening steps would be authentication, rate limiting, CI tests, stricter dependency pinning, and deployment monitoring.

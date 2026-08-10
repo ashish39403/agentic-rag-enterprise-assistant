@@ -82,3 +82,4 @@ requirements-lock-before-langfuse-4-upgrade.txt
 requirements-lock-before-langfuse-openai-upgrade.txt
 .gcloudignore
 notebooks
+test.ipynb

@@ -1,0 +1,5 @@
+streamlit==1.61.1
+requests==2.34.2
+python-dotenv==1.2.2
+logfire[requests]==4.40.0
+

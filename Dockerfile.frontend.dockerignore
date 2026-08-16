@@ -1,0 +1,37 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+tenvv/
+genv/
+enterprise_env/
+
+# Secrets and local state
+.env
+.env.*
+.logfire/
+.git/
+.vscode/
+.idea/
+*.log
+
+# Backend/data/eval artifacts are not needed in the frontend image.
+# Keep ui/ and requirements-frontend.txt available for Dockerfile.frontend.
+app/
+api/
+DATA/
+processed_data/
+DOCS/
+evals/
+notebooks/
+Dockerfile
+requirements.txt
+requirements-prod.txt
+test.ipynb

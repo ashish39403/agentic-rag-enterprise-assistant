@@ -12,7 +12,22 @@ from pydantic import BaseModel
 
 
 load_dotenv()
-logfire.configure(token=os.getenv("LOGFIRE_TOKEN"))
+
+
+def configure_logfire() -> None:
+    token = os.getenv("LOGFIRE_TOKEN")
+    if not token:
+        os.environ["LOGFIRE_IGNORE_NO_CONFIG"] = "1"
+        print("LOGFIRE_TOKEN is not set; Logfire tracing is disabled.")
+        return
+
+    try:
+        logfire.configure(token=token)
+    except Exception as exc:
+        print(f"Logfire configuration failed; tracing is disabled. Reason: {exc}")
+
+
+configure_logfire()
 langfuse = get_client()
 
 from app.agents.graph import rag_agent

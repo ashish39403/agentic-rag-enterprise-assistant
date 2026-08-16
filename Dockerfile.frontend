@@ -1,0 +1,16 @@
+FROM python:3.11-slim-bookworm
+
+WORKDIR /app
+
+COPY requirements-frontend.txt .
+RUN pip install --no-cache-dir --prefer-binary -r requirements-frontend.txt
+
+COPY ui/ ./ui/
+
+ENV PORT=8501
+ENV STREAMLIT_SERVER_HEADLESS=true
+ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
+ENV STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+
+CMD ["sh", "-c", "streamlit run ui/app.py --server.port ${PORT:-8501} --server.address 0.0.0.0"]
+

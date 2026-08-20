@@ -1,14 +1,12 @@
-import logfire
-from typing import Optional, Tuple
 
+import logfire
 from langchain_openai import ChatOpenAI
 from nemoguardrails import LLMRails, RailsConfig
 
 from app.config import settings
 from app.guardrails.colang_rules import COLANG_CONTENT, RAIL_INDICATORS, YAML_CONTENT
 
-
-_rails: Optional[LLMRails] = None
+_rails: LLMRails | None = None
 
 
 def initialize_rails() -> None:
@@ -36,7 +34,7 @@ def initialize_rails() -> None:
     logfire.info("NeMo Guardrails initialized.")
 
 
-def guard(message: str) -> Tuple[bool, Optional[str]]:
+def guard(message: str) -> tuple[bool, str | None]:
     """
     Run a user message through the NeMo rails gate.
 

@@ -1,9 +1,10 @@
 import json
-import re
-import logfire
-from langfuse.openai import openai
-from dotenv import load_dotenv
 import os
+import re
+
+import logfire
+from dotenv import load_dotenv
+from langfuse.openai import openai
 
 from app.config import settings
 

@@ -1,10 +1,10 @@
 import os
-import streamlit as st
-import requests
 import time
 import uuid
-import logfire
 
+import logfire
+import requests
+import streamlit as st
 
 # Initialize Logfire
 try:

@@ -1,11 +1,11 @@
 import os
-import streamlit as st
-import requests
 import time
 import uuid
-import logfire
-from dotenv import load_dotenv
 
+import logfire
+import requests
+import streamlit as st
+from dotenv import load_dotenv
 
 # Load environment variables explicitly from the root directory
 env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))

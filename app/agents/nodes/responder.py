@@ -1,4 +1,5 @@
 import logfire
+
 from app.agents.state import AgentState
 from app.gateway import create_chat_completion, extract_cache_status
 

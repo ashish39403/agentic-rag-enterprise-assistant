@@ -6,12 +6,13 @@ and actual_tools_called (detected from thought_process).
 """
 
 
-import time
 import copy
 import json
 import os
-import requests
+import time
+
 import logfire
+import requests
 
 API_URL = "http://localhost:8000/query"
 RESPONSE_TRUNCATE = 300

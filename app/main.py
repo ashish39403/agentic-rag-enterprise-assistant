@@ -1,6 +1,5 @@
 import os
 from contextlib import asynccontextmanager
-from typing import Optional
 
 import logfire
 from dotenv import load_dotenv
@@ -9,6 +8,7 @@ from fastapi.responses import JSONResponse
 from langfuse import get_client, propagate_attributes
 from langfuse.langchain import CallbackHandler
 from pydantic import BaseModel
+
 from app.agents.graph import rag_agent
 from app.guardrails import guard, initialize_rails
 
@@ -57,7 +57,7 @@ app = FastAPI(
 
 class QueryRequest(BaseModel):
     q: str
-    thread_id: Optional[str] = "default_user"
+    thread_id: str | None = "default_user"
 
 
 @app.get("/")

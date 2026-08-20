@@ -7,21 +7,20 @@ Contexts are truncated to 300 chars (2 chunks max) so no single request exceeds 
 """
 
 
-import os
 import asyncio
+import os
+
 import logfire
 import pandas as pd
 from openai import AsyncOpenAI
-
-
-from ragas.llms import llm_factory
 from ragas.embeddings import HuggingFaceEmbeddings
+from ragas.llms import llm_factory
 from ragas.metrics.collections import (
-    Faithfulness,
+    AnswerCorrectness,
     AnswerRelevancy,
     ContextPrecision,
     ContextRecall,
-    AnswerCorrectness,
+    Faithfulness,
 )
 
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"

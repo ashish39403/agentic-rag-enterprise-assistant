@@ -1,24 +1,20 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # CRITICAL: logfire must be configured before all other imports
 # ─────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
+import asyncio
 import os
 import sys
 
-
-from dotenv import load_dotenv
-
 import logfire
-
-# ─────────────────────────────────────────────────────────────────────────────
-import asyncio
 import nest_asyncio
 import pandas as pd
 import streamlit as st
+from dotenv import load_dotenv
 
-
-from evals.pipeline import run_pipeline, load_golden_dataset
-from evals.guardrails_eval import run_guardrails_eval, compute_guardrails_metrics
+from evals.guardrails_eval import compute_guardrails_metrics, run_guardrails_eval
 from evals.metrics import run_all_metrics
+from evals.pipeline import load_golden_dataset, run_pipeline
 
 load_dotenv()
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

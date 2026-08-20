@@ -1,9 +1,9 @@
-from typing import List
+
 import logfire
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
-def chunk_text(text:str , chunk_size:int =1500 , chunk_overlap:int =200)->List[str]:
+def chunk_text(text:str , chunk_size:int =1500 , chunk_overlap:int =200)->list[str]:
     """
     Chunk text using LangChain RecursiveCharacterTextSplitter.
     Splits by paragraphs/lines/sentences where possible, with overlap for context continuity.

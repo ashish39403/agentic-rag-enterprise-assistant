@@ -1,11 +1,9 @@
 import os
 import time
-from typing import List
 
 import logfire
 from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings
-
 
 load_dotenv()
 
@@ -65,13 +63,13 @@ def get_embedding_dim() -> int:
     return _embedding_dim
 
 
-def embed_query(query: str) -> List[float]:
+def embed_query(query: str) -> list[float]:
     """Embed one user/search query."""
     _init()
     return _active_model.embed_query(query)
 
 
-def _embed_batch(batch: List[str]) -> List[List[float]]:
+def _embed_batch(batch: list[str]) -> list[list[float]]:
     """Embed one batch with simple retry for rate limits/transient API errors."""
     for attempt in range(4):
         try:
@@ -98,7 +96,7 @@ def _embed_batch(batch: List[str]) -> List[List[float]]:
     raise RuntimeError("Embedding API failed after 4 attempts.")
 
 
-def embed_texts(texts: List[str]) -> List[List[float]]:
+def embed_texts(texts: list[str]) -> list[list[float]]:
     """Embed document chunks in batches."""
     _init()
 

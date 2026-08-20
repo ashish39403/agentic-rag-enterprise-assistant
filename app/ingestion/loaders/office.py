@@ -1,8 +1,9 @@
 import os
+
 import logfire
 from langchain_community.document_loaders import (
-    UnstructuredWordDocumentLoader,
     UnstructuredPowerPointLoader,
+    UnstructuredWordDocumentLoader,
 )
 
 

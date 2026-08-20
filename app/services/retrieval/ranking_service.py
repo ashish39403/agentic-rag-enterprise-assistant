@@ -30,7 +30,7 @@ def _extract_json_array(text: str) -> list[int]:
     try:
         data = json.loads(match.group(0))
         return [int(x) for x in data]
-    except Exception:
+    except (TypeError, ValueError, json.JSONDecodeError):
         return []
 
 
@@ -107,6 +107,6 @@ Return format example:
         logfire.warning("LLM reranking returned no valid indexes. Falling back to Qdrant order.")
         return documents[:top_n]
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         logfire.error("LLM reranking failed: {error}", error=str(e))
         return documents[:top_n]

@@ -24,7 +24,7 @@ def configure_logfire() -> None:
 
     try:
         logfire.configure(token=token)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"Logfire configuration failed; tracing is disabled. Reason: {exc}")
 
 
@@ -43,7 +43,7 @@ async def lifespan(app: FastAPI):
     """
     try:
         initialize_rails()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         logfire.error("Guardrails initialization failed: {error}", error=str(e))
     yield
     langfuse.flush()
@@ -71,7 +71,7 @@ def get_graph_image():
     try:
         png_bytes = rag_agent.get_graph().draw_mermaid_png()
         return Response(content=png_bytes, media_type="image/png")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         return {"error": f"Could not generate graph image: {e}"}
 
 
@@ -136,7 +136,7 @@ def query(request: QueryRequest):
             span.update(output=response_payload)
 
         return response_payload
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         logfire.error("Backend execution failed: {error}", error=str(e))
         return JSONResponse(
             status_code=500,

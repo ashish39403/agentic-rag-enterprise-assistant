@@ -85,4 +85,4 @@ def generate_node(state: AgentState):
 
         except Exception as e:
             logfire.error("LLM generation failed: {error}", error=str(e))
-            raise e
+            raise

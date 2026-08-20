@@ -10,6 +10,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import docx as python_docx
+import logfire
 from pptx import Presentation
 
 from app.ingestion.chunking.splitter import chunk_text
@@ -47,8 +48,12 @@ def parse_file(file_path: str) -> str:
             return parse_text(file_path)
         elif ext in (".html", ".htm"):
             return parse_html(file_path)
-    except Exception:
-        pass
+    except Exception as exc:  # noqa: BLE001
+        logfire.warning(
+            "Failed to parse eval file: {file_path} | {error}",
+            file_path=file_path,
+            error=str(exc),
+        )
     return ""
 
 

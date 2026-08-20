@@ -51,7 +51,7 @@ def run_guardrails_eval(guardrails_samples: list, progress_callback=None) -> lis
                     logfire.error("❌ Cannot reach FastAPI — is the app running on :8000?")
                     blocked = False
 
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001
                     logfire.error(f"❌ Guardrails test error: {e}")
                     blocked = False
 

@@ -11,7 +11,7 @@ try:
     logfire.configure(token=st.secrets.get("LOGFIRE_TOKEN", os.getenv("LOGFIRE_TOKEN")))
     logfire.instrument_requests()   # propagates trace context to the FastAPI backend
     LOGFIRE_STATUS = "Connected & Tracing"
-except Exception:
+except Exception:  # noqa: BLE001
     LOGFIRE_STATUS = "Standby (No Token)"
 
 # --- PAGE CONFIG ---
@@ -90,7 +90,7 @@ if prompt := st.chat_input("Ask about your documentation..."):
 
                     status.update(label="✅ Answer Synthesized", state="complete", expanded=False)
 
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001
                     logfire.error(f"❌ UI-Backend Connection Failed: {e}")
                     status.update(label="❌ Connection Failed", state="error")
                     st.error("Backend Offline.")

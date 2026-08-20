@@ -96,7 +96,7 @@ def process_file(file_path: str, filename: str, source_type: str):
                 )
                 logfire.info(f"Indexed {len(points)} points to Qdrant from {filename}.")
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             logfire.error(f"Failed to process {filename}: {e}")
 
 
@@ -109,7 +109,7 @@ def process_directory(dir_path: str, source_type: str):
             process_file(os.path.join(dir_path, filename), filename, source_type)
 
 
-def run_universal_ingestion(base_dir: str, explicit_source_type: str = None, wipe: bool = False):
+def run_universal_ingestion(base_dir: str, explicit_source_type: str | None = None, wipe: bool = False):
     """
     Scan base_dir, map sub-folders to source types, and ingest all documents.
     Pass --wipe to drop and recreate the Qdrant collection before ingestion.

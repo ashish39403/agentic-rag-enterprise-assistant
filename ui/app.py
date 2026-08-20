@@ -20,7 +20,7 @@ try:
     logfire.configure(token=token)
     # logfire.instrument_requests() # Disabled due to OpenTelemetry bug on Windows: MeterProvider.get_meter() got multiple values for argument 'version'
     LOGFIRE_STATUS = "Connected & Tracing"
-except Exception as e:
+except Exception as e:  # noqa: BLE001
     print(f"Logfire Init Error in UI: {e}")
     LOGFIRE_STATUS = f"Standby (Error: {e})"
     
@@ -108,7 +108,7 @@ if prompt := st.chat_input("Ask about your documentation..."):
                                 preview = source[:100].replace("\n", " ") + "..."
                                 with st.expander(f"Chunk {i+1}: {preview}"):
                                     st.info(source)
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001
                     logfire.error(f"❌ UI-Backend Connection Failed: {e}")
                     status.update(label="❌ Connection Failed", state="error")
                     st.error("Backend Offline.")

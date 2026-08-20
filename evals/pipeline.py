@@ -91,7 +91,7 @@ def run_pipeline(golden_dataset: dict, progress_callback=None) -> dict:
                     sample["actual_contexts"] = sample.get("relevant_contexts", [])
                     sample["actual_tools_called"] = ["unknown"]
 
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001
                     logfire.error(f"❌ Query failed: {e}")
                     sample["actual_response"] = ""
                     sample["actual_contexts"] = sample.get("relevant_contexts", [])

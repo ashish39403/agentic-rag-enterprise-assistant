@@ -36,6 +36,6 @@ def search_enterprise_knowledge(query: str, limit: int = 8):
             })
         
         return results
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         logfire.error(f"❌ Qdrant Search Failed: {e}")
         return []

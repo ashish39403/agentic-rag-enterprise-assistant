@@ -9,7 +9,8 @@ from fastapi.responses import JSONResponse
 from langfuse import get_client, propagate_attributes
 from langfuse.langchain import CallbackHandler
 from pydantic import BaseModel
-
+from app.agents.graph import rag_agent
+from app.guardrails import guard, initialize_rails
 
 load_dotenv()
 
@@ -30,8 +31,7 @@ def configure_logfire() -> None:
 configure_logfire()
 langfuse = get_client()
 
-from app.agents.graph import rag_agent
-from app.guardrails import guard, initialize_rails
+
 
 
 @asynccontextmanager

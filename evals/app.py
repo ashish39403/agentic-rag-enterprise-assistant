@@ -4,27 +4,26 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
-load_dotenv()
 
 import logfire
-logfire.configure(token=os.getenv("LOGFIRE_TOKEN"), service_name="evals")
 
 # ─────────────────────────────────────────────────────────────────────────────
 import asyncio
-import json
 import nest_asyncio
 import pandas as pd
 import streamlit as st
 
-nest_asyncio.apply()
 
 from evals.pipeline import run_pipeline, load_golden_dataset
 from evals.guardrails_eval import run_guardrails_eval, compute_guardrails_metrics
 from evals.metrics import run_all_metrics
 
+load_dotenv()
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+nest_asyncio.apply()
+logfire.configure(token=os.getenv("LOGFIRE_TOKEN"), service_name="evals")
 # ─────────────────────────────────────────────────────────────────────────────
 # Page config
 # ─────────────────────────────────────────────────────────────────────────────

@@ -26,6 +26,6 @@ def retrieve_node(state: AgentState):
     
     return {
         "documents": formatted_docs,
-        "status": f"Found technical context.",
+        "status": "Found technical context.",
         "plan": state["plan"] + ["Context Retrieved"]
     }
